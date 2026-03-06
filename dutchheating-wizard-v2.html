@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dutch Heating – Keuzehulp Demo v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #E8460A;
+  --orange-light: #FF6B35;
+  --orange-dim: rgba(232,70,10,0.12);
+  --dark: #141414;
+  --dark2: #1E1E1E;
+  --dark3: #2A2A2A;
+  --warm: #F7F3EE;
+  --warm2: #EDE8E0;
+  --white: #FFFFFF;
+  --muted: #888;
+  --text: #222;
+  --blue: #2563EB;
+  --green: #16A34A;
+  --r: 14px;
+  --shadow: 0 20px 60px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06);
+  --ease: cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--warm);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* HEADER */
+header {
+  background: var(--dark);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: #fff; }
+.logo span { color: var(--orange); }
+.demo-badge {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  background: rgba(232,70,10,0.2); border: 1px solid rgba(232,70,10,0.4);
+  color: var(--orange); padding: 4px 12px; border-radius: 100px;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1e1006 55%, #2d1508 100%);
+  padding: 64px 32px 100px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(232,70,10,0.25) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -60px; left: 10%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(244,168,40,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7); font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 6px 16px; border-radius: 100px; margin-bottom: 24px;
+}
+.hero-chip::before { content: '✦'; color: var(--orange); font-size: 0.7rem; }
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.4rem); color: #fff;
+  line-height: 1.12; margin-bottom: 18px; position: relative;
+}
+.hero h1 em { font-style: normal; color: var(--orange); }
+.hero p {
+  color: rgba(255,255,255,0.55); font-size: 1.05rem; font-weight: 300;
+  max-width: 540px; margin: 0 auto; line-height: 1.65; position: relative;
+}
+
+/* WIZARD WRAPPER */
+.wizard-wrap {
+  max-width: 900px; margin: -48px auto 80px;
+  padding: 0 20px; position: relative; z-index: 10;
+}
+
+/* CARD */
+.wizard-card {
+  background: var(--white);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* PROGRESS */
+.progress-track { background: #EDE8E0; height: 5px; }
+.progress-fill {
+  height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--orange), #F4A828);
+  transition: width 0.5s var(--ease);
+}
+.progress-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 32px 0;
+}
+.p-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.p-count { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--orange); }
+
+/* STEP */
+.step { display: none; padding: 28px 32px 36px; animation: fadeUp 0.38s var(--ease); }
+.step.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* CATEGORY SELECTOR */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 24px;
+}
+@media(max-width:580px){ .cat-grid { grid-template-columns: 1fr; } }
+
+.cat-card {
+  border: 2px solid #E5E0D8; border-radius: var(--r); padding: 22px 20px;
+  cursor: pointer; background: var(--warm); transition: all 0.25s var(--ease);
+  position: relative; text-align: left;
+}
+.cat-card:hover { border-color: var(--orange); background: #fff8f5; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,70,10,0.10); }
+.cat-card.selected { border-color: var(--orange); background: #fff3ee; box-shadow: 0 0 0 4px rgba(232,70,10,0.08); }
+.cat-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+.cat-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--dark); margin-bottom: 4px; }
+.cat-desc { font-size: 0.82rem; color: var(--muted); font-weight: 300; line-height: 1.5; }
+.check-ring {
+  position: absolute; top: 14px; right: 14px;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid #DDD; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; color: transparent; transition: all 0.25s var(--ease);
+}
+.cat-card.selected .check-ring { background: var(--orange); border-color: var(--orange); color: #fff; }
+.cat-card.selected .check-ring::after { content: '✓'; }
+
+/* QUESTION STEP */
+.q-heading { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.35rem; color: var(--dark); margin-bottom: 6px; line-height: 1.3; }
+.q-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 6px; font-weight: 300; }
+.q-note {
+  background: #FFF9F0; border: 1px solid rgba(244,168,40,0.3);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 20px;
+  font-size: 0.82rem; color: #7A5A2A; line-height: 1.55;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.q-note-icon { flex-shrink: 0; font-size: 0.9rem; }
+
+.q-section-label {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 16px; margin-top: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.q-section-label::after { content: ''; flex: 1; height: 1px; background: #EEE; }
+
+/* OPTIONS */
+.opts { display: grid; gap: 10px; margin-bottom: 8px; }
+.opts.cols2 { grid-template-columns: 1fr 1fr; }
+.opts.cols3 { grid-template-columns: repeat(3,1fr); }
+@media(max-width:560px){ .opts.cols2,.opts.cols3 { grid-template-columns: 1fr; } }
+
+.opt {
+  border: 2px solid #E5E0D8; border-radius: 12px; padding: 14px 16px;
+  cursor: pointer; background: var(--warm); transition: all 0.22s var(--ease);
+  display: flex; align-items: flex-start; gap: 12px; text-align: left;
+}
+.opt:hover { border-color: var(--orange); background: #fff8f5; }
+.opt.sel { border-color: var(--orange); background: #fff3ee; box-shadow: 0 0 0 3px rgba(232,70,10,0.08); }
+.opt-radio {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CCC;
+  flex-shrink: 0; margin-top: 2px; transition: all 0.22s var(--ease); position: relative;
+}
+.opt.sel .opt-radio { border-color: var(--orange); background: var(--orange); }
+.opt.sel .opt-radio::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); width: 6px; height: 6px;
+  background: #fff; border-radius: 50%;
+}
+.opt-body {}
+.opt-title { font-weight: 500; font-size: 0.92rem; color: var(--dark); margin-bottom: 2px; }
+.opt-hint { font-size: 0.78rem; color: var(--muted); font-weight: 300; line-height: 1.45; }
+
+/* DOORSTUUR TAG */
+.doorstuur-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #EEF3FF; border: 1px solid #BDD0FF; color: var(--blue);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
+  padding: 3px 10px; border-radius: 100px; margin-bottom: 10px;
+}
+.doorstuur-block {
+  background: #F0F5FF; border: 2px solid #BDD0FF; border-radius: 12px; padding: 16px 20px;
+  margin-bottom: 8px; font-size: 0.9rem; color: #1E40AF; line-height: 1.55;
+}
+
+/* NAV */
+.step-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 28px; padding-top: 22px; border-top: 1px solid #EEE;
+}
+.btn {
+  font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.92rem;
+  padding: 12px 26px; border-radius: 100px; border: none; cursor: pointer;
+  transition: all 0.25s var(--ease); display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none;
+}
+.btn-primary { background: var(--orange); color: #fff; box-shadow: 0 4px 16px rgba(232,70,10,0.28); }
+.btn-primary:hover { background: #c73b08; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,70,10,0.38); }
+.btn-primary:disabled { background: #CCC; box-shadow: none; cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--muted); border: 2px solid #E5E0D8; }
+.btn-ghost:hover { border-color: var(--dark); color: var(--dark); }
+
+/* SECTION PROGRESS DOTS */
+.section-dots {
+  display: flex; align-items: center; gap: 6px;
+  padding: 14px 32px 0; flex-wrap: wrap;
+}
+.s-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #DDD;
+  transition: all 0.3s var(--ease); cursor: default;
+}
+.s-dot.done { background: var(--orange); }
+.s-dot.current { background: var(--orange); width: 22px; border-radius: 4px; }
+.s-sep { color: #CCC; font-size: 0.7rem; margin: 0 2px; }
+
+/* RESULT */
+.result-header {
+  background: linear-gradient(135deg, var(--dark), #1e0f06);
+  padding: 40px 32px 32px; text-align: center;
+}
+.result-chip {
+  display: inline-block; background: rgba(232,70,10,0.2); border: 1px solid rgba(232,70,10,0.4);
+  color: #ff8a5c; padding: 5px 16px; border-radius: 100px;
+  font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 16px;
+}
+.result-header h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.9rem; color: #fff; margin-bottom: 8px; }
+.result-header p { color: rgba(255,255,255,0.55); font-size: 0.92rem; font-weight: 300; }
+.result-body { padding: 32px; }
+
+.summary-grid { display: grid; gap: 10px; margin-bottom: 28px; }
+.summary-item {
+  background: var(--warm); border-radius: 12px; padding: 14px 18px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.s-cat { font-size: 0.72rem; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+.s-q { font-size: 0.82rem; color: var(--muted); margin-bottom: 2px; font-weight: 300; }
+.s-a { font-size: 0.95rem; font-weight: 500; color: var(--dark); }
+.s-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.result-tip {
+  background: #FFF9F0; border: 1px solid rgba(244,168,40,0.3);
+  border-radius: 14px; padding: 20px 24px; margin-bottom: 24px;
+}
+.tip-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.tip-body { font-size: 0.85rem; color: #7A5A2A; line-height: 1.6; font-weight: 300; }
+
+.advice-cards { display: grid; gap: 14px; margin-bottom: 28px; }
+.advice-card {
+  border: 2px solid #E5E0D8; border-radius: var(--r); padding: 20px 22px;
+  display: flex; gap: 16px; background: var(--warm); transition: all 0.25s var(--ease);
+  position: relative;
+}
+.advice-card:hover { border-color: var(--orange); box-shadow: 0 4px 16px rgba(232,70,10,0.08); }
+.advice-card.top { border-color: var(--orange); background: #fff8f5; }
+.top-badge {
+  position: absolute; top: -11px; left: 18px;
+  background: var(--orange); color: #fff; font-size: 0.7rem; font-weight: 600;
+  padding: 3px 12px; border-radius: 100px;
+}
+.a-icon { font-size: 2.2rem; flex-shrink: 0; }
+.a-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 5px; }
+.a-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.55; font-weight: 300; margin-bottom: 10px; }
+.a-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.83rem; font-weight: 500; color: var(--orange); text-decoration: none; transition: gap 0.2s; }
+.a-link:hover { gap: 10px; }
+
+.result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-restart { background: transparent; border: 2px solid #E5E0D8; color: var(--muted); padding: 11px 22px; border-radius: 100px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; transition: all 0.25s var(--ease); display: inline-flex; align-items: center; gap: 6px; }
+.btn-restart:hover { border-color: var(--dark); color: var(--dark); }
+.btn-shop { background: var(--dark); color: #fff; padding: 11px 22px; border-radius: 100px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; transition: all 0.25s var(--ease); display: inline-flex; align-items: center; gap: 6px; }
+.btn-shop:hover { background: var(--orange); }
+
+.trust-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 24px 32px; border-top: 1px solid #EEE; }
+.t-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted); }
+.t-item span:first-child { font-size: 1rem; }
+
+/* SKIP */
+.skip-link { font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: all 0.2s; }
+.skip-link:hover { color: var(--orange); text-decoration-color: var(--orange); }
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header { padding: 14px 18px; }
+  .hero { padding: 44px 18px 80px; }
+  .step { padding: 20px 18px 28px; }
+  .progress-meta,.section-dots { padding-left: 18px; padding-right: 18px; }
+  .result-header,.result-body { padding: 24px 18px; }
+  .trust-bar { gap: 14px; }
+  .advice-card { flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Dutch<span>Heating</span></div>
+  <div class="demo-badge">Demo v2</div>
+</header>
+
+<div class="hero">
+  <div class="hero-chip">Gratis Keuzehulp</div>
+  <h1>Vind de <em>perfecte</em> verwarming<br>voor jouw situatie</h1>
+  <p>Beantwoord een paar gerichte vragen en wij adviseren welk product het beste bij jou past — inclusief type, vermogen en aansturing.</p>
+</div>
+
+<div class="wizard-wrap">
+<div class="wizard-card">
+
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress-meta">
+  <div class="p-label" id="pLabel">Kies je categorie</div>
+  <div class="p-count" id="pCount"></div>
+</div>
+<div class="section-dots" id="sectionDots"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- STAP 0: CATEGORIEKEUZE               -->
+<!-- ══════════════════════════════════════ -->
+<div class="step active" id="step-cat">
+  <div class="q-heading" style="margin-bottom:6px">Wat wil je verwarmen?</div>
+  <div class="q-sub" style="margin-bottom:20px">Kies de categorie die het beste bij jouw situatie past.</div>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="selectCat('vloer')" id="cat-vloer">
+      <div class="check-ring"></div>
+      <span class="cat-icon">🦶</span>
+      <div class="cat-title">Elektrische vloerverwarming</div>
+      <div class="cat-desc">IR matten of verwarmingsfolie onder tegel, laminaat, PVC of parket</div>
+    </div>
+    <div class="cat-card" onclick="selectCat('paneel')" id="cat-paneel">
+      <div class="check-ring"></div>
+      <span class="cat-icon">☀️</span>
+      <div class="cat-title">Infrarood panelen</div>
+      <div class="cat-desc">Wand-, plafond- of verplaatsbare panelen voor binnen en werkplekken</div>
+    </div>
+    <div class="cat-card" onclick="selectCat('terras')" id="cat-terras">
+      <div class="check-ring"></div>
+      <span class="cat-icon">🌿</span>
+      <div class="cat-title">Terrasverwarmers</div>
+      <div class="cat-desc">Donkerstralers, korte golf en industriële stralers voor buiten</div>
+    </div>
+    <div class="cat-card" onclick="selectCat('therm')" id="cat-therm">
+      <div class="check-ring"></div>
+      <span class="cat-icon">🎛️</span>
+      <div class="cat-title">Thermostaten & aansturing</div>
+      <div class="cat-desc">Slimme bediening, wifi, domotica en sensoren voor je verwarmingssysteem</div>
+    </div>
+  </div>
+  <div class="step-nav">
+    <div></div>
+    <button class="btn btn-primary" id="btn-cat-next" onclick="startFlow()" disabled>Starten <span>→</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- VLOERVERWARMING FLOW         -->
+<!-- ══════════════════════════════ -->
+
+<div class="step" id="vloer-1">
+  <div class="q-section-label">Vloerverwarming · Ruimte & situatie</div>
+  <div class="q-heading">Wat is het netto vloeroppervlak per ruimte?</div>
+  <div class="q-sub">Netto = zonder grote vaste meubels en met 10 cm vrije ruimte vanaf elke muur.</div>
+  <div class="q-note"><span class="q-note-icon">💡</span>Het oppervlak bepaalt het benodigde vermogen: 150W/m² (of 100W bij perfecte isolatie). Max. ~20m² per groep van 3500W.</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'vloer-1','<10m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Minder dan 10 m²</div><div class="opt-hint">Klein vertrek, toilet, hal of badkamer</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-1','10-20m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">10 – 20 m²</div><div class="opt-hint">Slaapkamer, kantoor of ruime badkamer</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-1','20-40m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">20 – 40 m²</div><div class="opt-hint">Woonkamer of open keuken/woonkamer — meerdere groepen nodig</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-1','>40m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Meer dan 40 m²</div><div class="opt-hint">Grote ruimte of meerdere kamers — persoonlijk advies aanbevolen</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-2')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-2">
+  <div class="q-section-label">Vloerverwarming · Ruimte & situatie</div>
+  <div class="q-heading">Gaat het om één ruimte of meerdere zones?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'vloer-2','Één ruimte')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Één ruimte</div><div class="opt-hint">Eén thermostaat, één groep</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-2','Meerdere zones')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Meerdere zones</div><div class="opt-hint">Aparte groepen en sensoren per zone; eventueel domotica</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-3')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-3">
+  <div class="q-section-label">Vloerverwarming · Ondervloer</div>
+  <div class="q-heading">Wat is de ondervloer?</div>
+  <div class="q-note"><span class="q-note-icon">ℹ️</span>De amorfe IR mat kan op iedere ondervloer worden gelegd. Bij 'anders': bespreek met onze adviseur.</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'vloer-3','Beton / anhydriet')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Beton / anhydriet</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-3','Zandcement')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Zandcement</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-3','Hout')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Hout</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-3','Bestaande tegels')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Bestaande tegels</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-3','Anders / onbekend')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Anders / onbekend</div><div class="opt-hint">Onze adviseur helpt je verder</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-4')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-4">
+  <div class="q-section-label">Vloerverwarming · Topvloer & mattype</div>
+  <div class="q-heading">Welke topvloer komt erop?</div>
+  <div class="q-note"><span class="q-note-icon">🔑</span><span><strong>Bepaalt het type mat:</strong> Amorfe IR mat bij tegel, gietvloer en badkamer. IR verwarmingsfolie bij laminaat, klik-PVC, Rigid PVC, vinyl en kurk. Dicht tapijt: werking sterk verminderd.</span></div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'vloer-4','Tegel / steen')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Tegel / steen</div><div class="opt-hint">→ Amorfe IR mat</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-4','Laminaat')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Laminaat</div><div class="opt-hint">→ IR verwarmingsfolie</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-4','Klik-PVC / Rigid PVC')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Klik-PVC / Rigid PVC</div><div class="opt-hint">→ IR verwarmingsfolie</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-4','Plak-PVC / vinyl')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Plak-PVC / vinyl</div><div class="opt-hint">→ IR verwarmingsfolie</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-4','Parket / kurk')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Parket / kurk</div><div class="opt-hint">→ IR verwarmingsfolie</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-4','Tapijt')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Tapijt</div><div class="opt-hint">⚠️ Dicht tapijt vermindert werking sterk — alternatief bespreken</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-5')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-5">
+  <div class="q-section-label">Vloerverwarming · Gebruik</div>
+  <div class="q-heading">Dient het als hoofd- of bijverwarming?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'vloer-5','Hoofdverwarming')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Hoofdverwarming</div><div class="opt-hint">Enige verwarmingsbron; isolatiewaarde is cruciaal</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-5','Bijverwarming')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Bijverwarming</div><div class="opt-hint">Aanvulling op bestaande verwarming; extra comfort</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-6')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-6">
+  <div class="q-section-label">Vloerverwarming · Isolatie</div>
+  <div class="q-heading">Hoe goed is de ruimte geïsoleerd?</div>
+  <div class="q-note"><span class="q-note-icon">💡</span>Goed geïsoleerd: ~30 kWh/m² per jaar. Slecht geïsoleerd: 40-50 kWh/m². Isolatie heeft directe invloed op het benodigde vermogen en de energierekening.</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'vloer-6','Goed geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Goed geïsoleerd</div><div class="opt-hint">Na 2010 gebouwd of gerenoveerd, vloer-/dakisolatie aanwezig, HR++ beglazing</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-6','Matig geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Matig geïsoleerd</div><div class="opt-hint">1990-2010, enkele isolatievoorzieningen maar niet volledig</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-6','Slecht geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Slecht / niet geïsoleerd</div><div class="opt-hint">Voor 1990, weinig tot geen isolatie, enkel glas</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-6','Onbekend')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Onbekend</div><div class="opt-hint">Onze adviseur helpt je de juiste inschatting maken</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-7')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-7">
+  <div class="q-section-label">Vloerverwarming · Installatie</div>
+  <div class="q-heading">Zelf installeren of uitbesteden?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'vloer-7','Zelf installeren')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Zelf installeren</div><div class="opt-hint">We leveren uitgebreide instructies en technische support</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-7','Uitbesteden aan installateur')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Uitbesteden aan installateur</div><div class="opt-hint">DHP kan een erkende installateur in jouw regio aanbevelen</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('vloer-8')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="vloer-8">
+  <div class="q-section-label">Vloerverwarming · Aansturing</div>
+  <div class="q-heading">Hoe wil je de vloerverwarming aansturen?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'vloer-8','Eenvoudige thermostaat')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Eenvoudige thermostaat</div><div class="opt-hint">Draaiknop of touchscreen, geen app nodig</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-8','Thermostaat met weekprogramma')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Programmeerbare thermostaat</div><div class="opt-hint">Weekschema instellen, automatisch aan/uit</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-8','Wifi / app bediening')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wifi / app bediening</div><div class="opt-hint">Bedien op afstand via smartphone</div></div></div>
+    <div class="opt" onclick="pick(this,'vloer-8','Smarthome koppeling')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Smarthome koppeling</div><div class="opt-hint">Koppeling met Toon, Google Home, HomeKit, Homey, KNX, Zigbee of Z-Wave</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="showResult()">Bekijk advies ✦</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- IR PANELEN FLOW              -->
+<!-- ══════════════════════════════ -->
+
+<div class="step" id="paneel-1">
+  <div class="q-section-label">IR Panelen · Ruimte & isolatie</div>
+  <div class="q-heading">Wat is het netto vloeroppervlak van de ruimte?</div>
+  <div class="q-sub">Netto = zonder vaste meubels, 10 cm vanaf elke muur.</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'paneel-1','<15m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Minder dan 15 m²</div><div class="opt-hint">Kleine slaapkamer, studeerkamer, badkamer</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-1','15-30m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">15 – 30 m²</div><div class="opt-hint">Woonkamer, kantoorruimte</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-1','30-60m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">30 – 60 m²</div><div class="opt-hint">Grote woonkamer of open ruimte</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-1','>60m² / hal')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Meer dan 60 m² / hal</div><div class="opt-hint">Grote ruimte, loods of werkplaats — persoonlijk advies</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-2')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-2">
+  <div class="q-section-label">IR Panelen · Ruimte & isolatie</div>
+  <div class="q-heading">Hoe goed is de ruimte geïsoleerd?</div>
+  <div class="q-note"><span class="q-note-icon">💡</span>De isolatiewaarde bepaalt sterk hoeveel vermogen je nodig hebt. Bij goede isolatie: 35-50% energiebesparing t.o.v. conventionele verwarming.</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'paneel-2','Goed geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Goed geïsoleerd</div><div class="opt-hint">Na 2010, HR++ beglazing, dak- en vloerisolatie aanwezig</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-2','Matig geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Matig geïsoleerd</div><div class="opt-hint">1990-2010, gedeeltelijk geïsoleerd</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-2','Slecht geïsoleerd')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Slecht / niet geïsoleerd</div><div class="opt-hint">Voor 1990, weinig isolatie — extra vermogen nodig</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-3')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-3">
+  <div class="q-section-label">IR Panelen · Gebruik</div>
+  <div class="q-heading">Welke ruimte wil je verwarmen?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'paneel-3','Woonkamer / kantoor')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Woonkamer / kantoor</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-3','Slaapkamer')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Slaapkamer</div><div class="opt-hint">Geruisloos, geen licht — paneel zonder verlichting adviseren</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-3','Badkamer')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Badkamer</div><div class="opt-hint">Spatwaterdicht (IP44+) vereist; hoger vermogen adviseren</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-3','Werkplek in grote ruimte / hal')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Werkplek in grote hal</div><div class="opt-hint">Gericht verwarmen van werkplek i.p.v. hele ruimte</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-4')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-4">
+  <div class="q-section-label">IR Panelen · Gebruik</div>
+  <div class="q-heading">Hoofd- of bijverwarming?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'paneel-4','Hoofdverwarming')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Hoofdverwarming</div><div class="opt-hint">Enige bron — dimensionering is cruciaal</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-4','Bijverwarming')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Bijverwarming</div><div class="opt-hint">Extra comfort naast bestaand systeem</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-5')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-5">
+  <div class="q-section-label">IR Panelen · Montage & uitstraling</div>
+  <div class="q-heading">Waar wordt het paneel geplaatst?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'paneel-5','Wandmontage')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wandmontage</div><div class="opt-hint">Eenvoudig te monteren; gericht straling</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-5','Plafondmontage')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Plafondmontage</div><div class="opt-hint">Gelijkmatigere straling over de ruimte</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-5','Los / verplaatsbaar')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Los / verplaatsbaar</div><div class="opt-hint">Flexibel inzetbaar, bijv. bij werkplek of tijdelijke plek</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-6')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-6">
+  <div class="q-section-label">IR Panelen · Montage & uitstraling</div>
+  <div class="q-heading">Welk type paneel past bij het interieur?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'paneel-6','Neutraal wit paneel')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Neutraal wit paneel</div><div class="opt-hint">Onopvallend, past in elk interieur</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-6','Spiegelpaneel')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Spiegelpaneel</div><div class="opt-hint">Populair in badkamer; functioneel én decoratief</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-6','Bedrukt / eigen foto')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Bedrukt / eigen foto</div><div class="opt-hint">Volledig op maat met eigen design of afbeelding</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-6','Paneel met verlichting')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Paneel met verlichting</div><div class="opt-hint">Verwarming én verlichting gecombineerd</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('paneel-7')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="paneel-7">
+  <div class="q-section-label">IR Panelen · Aansturing</div>
+  <div class="q-heading">Hoe wil je het paneel aansturen?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'paneel-7','Thermostaat')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Thermostaat</div><div class="opt-hint">Bespaart gemiddeld 20-30% energie</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-7','Wifi / app')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wifi / app bediening</div><div class="opt-hint">Op afstand bedienen via smartphone</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-7','Smarthome')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Smarthome koppeling</div><div class="opt-hint">Google Home, HomeKit, Homey, KNX, Zigbee of Z-Wave</div></div></div>
+    <div class="opt" onclick="pick(this,'paneel-7','Geen thermostaat nodig')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Geen thermostaat</div><div class="opt-hint">Handmatig aan/uit via wandschakelaar</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="showResult()">Bekijk advies ✦</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- TERRASVERWARMERS FLOW        -->
+<!-- ══════════════════════════════ -->
+
+<div class="step" id="terras-1">
+  <div class="q-section-label">Terrasverwarmers · Situatie & ruimte</div>
+  <div class="q-heading">Wat is de opstelling?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'terras-1','Open terras / tuin')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Open terras / tuin</div><div class="opt-hint">Volledig buiten, wind mogelijk aanwezig</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-1','Overdekt / semi-overdekt terras')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Overdekt / semi-overdekt terras</div><div class="opt-hint">Overkapping, veranda of terrasoverkapping — meer opties</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-1','Werkplaats / loods')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Werkplaats / loods / industrieel</div><div class="opt-hint">Grote (semi-)overdekte werkruimte</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('terras-2')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="terras-2">
+  <div class="q-section-label">Terrasverwarmers · Situatie & ruimte</div>
+  <div class="q-heading">Wat is de oppervlakte van de te verwarmen zone?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'terras-2','<10m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Minder dan 10 m²</div><div class="opt-hint">Klein balkon, kleine sitzhoek</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-2','10-25m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">10 – 25 m²</div><div class="opt-hint">Middelgroot terras of veranda</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-2','25-50m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">25 – 50 m²</div><div class="opt-hint">Groot terras of horecaopstelling</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-2','>50m²')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Meer dan 50 m²</div><div class="opt-hint">Grote locatie — persoonlijk maatadvies aanbevolen</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('terras-3')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="terras-3">
+  <div class="q-section-label">Terrasverwarmers · Gebruik & sfeer</div>
+  <div class="q-heading">Privé of zakelijk gebruik?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'terras-3','Privé')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Privé</div><div class="opt-hint">Tuin, balkon of thuisterras</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-3','Zakelijk')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Zakelijk</div><div class="opt-hint">Horeca, evenement of werkplaats — zwaarder type nodig</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('terras-4')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="terras-4">
+  <div class="q-section-label">Terrasverwarmers · Gebruik & sfeer</div>
+  <div class="q-heading">Wat is de sfeerwens?</div>
+  <div class="q-note"><span class="q-note-icon">💡</span>Donkerstralers geven directe warmte zonder storend oranje licht — ideaal voor sfeervolle terrassen. Korte golf is krachtiger en windbestendiger maar heeft een zichtbare gloed.</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'terras-4','Geen zichtbaar licht (donkerstraler)')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Geen zichtbaar licht — donkerstraler</div><div class="opt-hint">Meest sfeervol, populairste keuze voor horeca en tuinen</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-4','Beetje gloed is prima')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Beetje gloed is prima</div><div class="opt-hint">Korte golf of middengolf — krachtiger, ook bij wind</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-4','Industrieel / werkplaats')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Industrieel / functioneel</div><div class="opt-hint">Geen sfeereisen — maximale capaciteit en duurzaamheid</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('terras-5')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="terras-5">
+  <div class="q-section-label">Terrasverwarmers · Type & montage</div>
+  <div class="q-heading">Vaste montage of verrijdbaar?</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'terras-5','Vaste montage wand/plafond')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Vaste montage</div><div class="opt-hint">Wand of plafond — meest efficiënt en netjes</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-5','Verrijdbaar / los')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Verrijdbaar / los</div><div class="opt-hint">Flexibel inzetbaar op standaard of sokkel</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('terras-6')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="terras-6">
+  <div class="q-section-label">Terrasverwarmers · Kleur & aansturing</div>
+  <div class="q-heading">Gewenste kleur en bediening?</div>
+  <div class="q-sub">Kleur:</div>
+  <div class="opts cols2" style="margin-bottom:16px">
+    <div class="opt" onclick="pick(this,'terras-6-kleur','Wit')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wit</div><div class="opt-hint">Past bij lichtere interieurs en plafonds</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-6-kleur','Zwart')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Zwart</div><div class="opt-hint">Donkere terrasomgevingen, horecalook</div></div></div>
+  </div>
+  <div class="q-sub">Bediening:</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'terras-6','Schakelaar / dimmer')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Schakelaar / dimmer</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-6','Afstandsbediening')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Afstandsbediening</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-6','Wifi / app')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wifi / app</div></div></div>
+    <div class="opt" onclick="pick(this,'terras-6','Timer / thermostaat')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Timer / thermostaat</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="showResult()">Bekijk advies ✦</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- THERMOSTATEN FLOW            -->
+<!-- ══════════════════════════════ -->
+
+<div class="step" id="therm-1">
+  <div class="q-section-label">Thermostaten · Wat stuur je aan?</div>
+  <div class="q-heading">Voor welk verwarmingssysteem zoek je een thermostaat?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'therm-1','IR vloerverwarming')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">IR vloerverwarming</div><div class="opt-hint">Vloersensor aanbevolen voor bescherming topvloer</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-1','IR panelen')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Infrarood panelen</div><div class="opt-hint">Kamerthermostaat of ingebouwde aansturing</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-1','Terrasverwarmer')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Terrasverwarmer</div><div class="opt-hint">Dimmer, timer of thermostaat</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-1','Combinatie / meerdere systemen')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Combinatie / meerdere systemen</div><div class="opt-hint">Domotica of centraal aangestuurde oplossing</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('therm-2')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="therm-2">
+  <div class="q-section-label">Thermostaten · Zones</div>
+  <div class="q-heading">Hoeveel zones moeten worden aangestuurd?</div>
+  <div class="q-note"><span class="q-note-icon">💡</span>Vuistregel: één thermostaat en één sensor per zone of kamer. Meerdere zones vereisen meerdere thermostaten of een domoticasysteem.</div>
+  <div class="opts cols2">
+    <div class="opt" onclick="pick(this,'therm-2','1 zone')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">1 zone / kamer</div><div class="opt-hint">Één thermostaat volstaat</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-2','2-3 zones')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">2 – 3 zones</div><div class="opt-hint">Meerdere thermostaten; zelfde of verschillende ruimtes</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-2','4+ zones')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">4 of meer zones</div><div class="opt-hint">Domotica of centrale aansturing aanbevolen</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('therm-3')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="therm-3">
+  <div class="q-section-label">Thermostaten · Bediening</div>
+  <div class="q-heading">Hoe wil je bedienen?</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'therm-3','Draaiknop / touchscreen')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Draaiknop of touchscreen</div><div class="opt-hint">Eenvoudig, geen app nodig</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-3','Weekprogramma')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Programmeerbaar (weekschema)</div><div class="opt-hint">Automatisch aan/uit op vaste tijden</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-3','Wifi / app')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Wifi / app bediening</div><div class="opt-hint">Op afstand bedienen via smartphone</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-3','Smarthome platform')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Smarthome platform</div><div class="opt-hint">Toon, Google Home, HomeKit, Homey, KNX, Zigbee, Z-Wave</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="goNext('therm-4')">Volgende →</button>
+  </div>
+</div>
+
+<div class="step" id="therm-4">
+  <div class="q-section-label">Thermostaten · Extra functies</div>
+  <div class="q-heading">Welke extra functies zijn gewenst?</div>
+  <div class="q-sub">Kies de opties die van toepassing zijn — of sla over als je het niet zeker weet.</div>
+  <div class="opts">
+    <div class="opt" onclick="pick(this,'therm-4','Vloersensor')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Vloersensor</div><div class="opt-hint">Beschermt topvloer (laminaat / PVC) tegen oververhitting — sterk aanbevolen bij vloerverwarming</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-4','Vorstbeveiliging')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Vorstbeveiliging</div><div class="opt-hint">Verwarming springt automatisch aan bij temperatuur onder nulpunt</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-4','Energiemeting')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Energiemeting / verbruiksrapportage</div><div class="opt-hint">Inzicht in verbruik en besparing</div></div></div>
+    <div class="opt" onclick="pick(this,'therm-4','Geen extra functies')"><div class="opt-radio"></div><div class="opt-body"><div class="opt-title">Geen extra functies nodig</div></div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn btn-ghost" onclick="goBack()">← Terug</button>
+    <button class="btn btn-primary" disabled onclick="showResult()">Bekijk advies ✦</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ -->
+<!-- RESULTAAT                    -->
+<!-- ══════════════════════════════ -->
+<div class="step" id="step-result">
+  <div id="resultContent"></div>
+  <div class="trust-bar">
+    <div class="t-item"><span>⭐</span><span>Hoge klantwaardering</span></div>
+    <div class="t-item"><span>🚚</span><span>Snelle levering</span></div>
+    <div class="t-item"><span>💬</span><span>Gratis persoonlijk advies</span></div>
+    <div class="t-item"><span>🔒</span><span>Veilig betalen</span></div>
+  </div>
+</div>
+
+</div><!-- .wizard-card -->
+</div><!-- .wizard-wrap -->
+
+<script>
+// ── STATE ──────────────────────────────────────────
+const state = {
+  category: null,
+  answers: {},
+  history: ['step-cat'],
+  current: 'step-cat'
+};
+
+// flows per category
+const flows = {
+  vloer: ['vloer-1','vloer-2','vloer-3','vloer-4','vloer-5','vloer-6','vloer-7','vloer-8'],
+  paneel: ['paneel-1','paneel-2','paneel-3','paneel-4','paneel-5','paneel-6','paneel-7'],
+  terras: ['terras-1','terras-2','terras-3','terras-4','terras-5','terras-6'],
+  therm: ['therm-1','therm-2','therm-3','therm-4'],
+};
+
+const catLabels = { vloer: 'Vloerverwarming', paneel: 'IR Panelen', terras: 'Terrasverwarmers', therm: 'Thermostaten' };
+const catIcons  = { vloer: '🦶', paneel: '☀️', terras: '🌿', therm: '🎛️' };
+
+// ── CATEGORY SELECT ────────────────────────────────
+function selectCat(cat) {
+  state.category = cat;
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('cat-' + cat).classList.add('selected');
+  document.getElementById('btn-cat-next').disabled = false;
+}
+
+function startFlow() {
+  if (!state.category) return;
+  const first = flows[state.category][0];
+  showStep(first);
+  state.history = ['step-cat', first];
+  state.current = first;
+  updateProgress();
+}
+
+// ── OPTION PICK ────────────────────────────────────
+function pick(el, key, val) {
+  // deselect siblings in same opts container
+  el.closest('.opts').querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  state.answers[key] = val;
+
+  // enable next button in this step
+  const step = el.closest('.step');
+  const btn = step.querySelector('.btn-primary');
+  if (btn) btn.disabled = false;
+}
+
+// ── NAVIGATION ─────────────────────────────────────
+function goNext(nextId) {
+  showStep(nextId);
+  if (!state.history.includes(nextId)) state.history.push(nextId);
+  state.current = nextId;
+  updateProgress();
+}
+
+function goBack() {
+  const idx = state.history.indexOf(state.current);
+  if (idx <= 0) return;
+  const prev = state.history[idx - 1];
+  showStep(prev);
+  state.current = prev;
+  updateProgress();
+}
+
+function showStep(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── PROGRESS ───────────────────────────────────────
+function updateProgress() {
+  const id = state.current;
+  if (id === 'step-cat') {
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('pLabel').textContent = 'Kies je categorie';
+    document.getElementById('pCount').textContent = '';
+    document.getElementById('sectionDots').innerHTML = '';
+    return;
+  }
+  if (id === 'step-result') {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('pLabel').textContent = 'Advies klaar';
+    document.getElementById('pCount').textContent = '✓';
+    return;
+  }
+  const flow = flows[state.category] || [];
+  const idx = flow.indexOf(id);
+  const total = flow.length;
+  const pct = Math.round(((idx + 1) / (total + 1)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pLabel').textContent = catLabels[state.category] + ' · Stap ' + (idx + 1) + ' van ' + total;
+  document.getElementById('pCount').textContent = Math.round(((idx+1)/total)*100) + '%';
+
+  // dots
+  const dots = document.getElementById('sectionDots');
+  dots.innerHTML = flow.map((s, i) => {
+    let cls = i < idx ? 'done' : i === idx ? 'current' : '';
+    return `<div class="s-dot ${cls}" title="Stap ${i+1}"></div>`;
+  }).join('');
+}
+
+// ── RESULT ─────────────────────────────────────────
+const adviceDB = {
+  vloer: {
+    default: {
+      tip: "Netto vloeroppervlak altijd meten zonder vaste meubels en met 10 cm ruimte van elke muur. Isolatiefolie onder de mat verhoogt de efficiëntie aanzienlijk.",
+      cards: [
+        { top: true,  icon: '🦶', title: 'Amorfe IR mat — voor tegel & gietvloer', desc: 'Flinterdun, 25 jaar garantie, 150W/m². Direct op elke ondervloer, inclusief beton en anhydriet. Snel opwarmend (20-30 min).', url: 'https://dutchheating.nl/elektrische-vloerverwarming/', link: 'Bekijk IR vloermatten →' },
+        { top: false, icon: '📄', title: 'IR verwarmingsfolie — voor laminaat & PVC', desc: 'Dunne folie geschikt voor laminaat, klik-PVC, Rigid PVC, vinyl en kurk. Eventueel met MGO of Heat Pak tussenlaag.', url: 'https://dutchheating.nl/elektrische-vloerverwarming/', link: 'Bekijk verwarmingsfolie →' },
+        { top: false, icon: '🎛️', title: 'Thermostaat met vloersensor', desc: 'Beschermt je topvloer tegen oververhitting en bespaart gemiddeld 20-30% energie.', url: 'https://dutchheating.nl/thermostaten-aansturing/', link: 'Bekijk thermostaten →' },
+      ]
+    }
+  },
+  paneel: {
+    'Badkamer': {
+      tip: "Badkamerpanelen moeten minimaal IP44 (spatwaterdicht) zijn. Spiegelpanelen zijn de populairste keuze — functioneel en decoratief tegelijk.",
+      cards: [
+        { top: true,  icon: '🪞', title: 'Infrarood spiegelpaneel', desc: 'Combineert spiegel en verwarming. Spatwaterdicht, warmloopvrij en decoratief. Bestseller voor de badkamer.', url: 'https://dutchheating.nl/infrarood-paneel-spiegel/', link: 'Bekijk spiegelpanelen →' },
+        { top: false, icon: '☀️', title: 'Infrarood panelen voor badkamer', desc: 'IP44 gecertificeerde panelen, speciaal geselecteerd voor vochtige ruimtes.', url: 'https://dutchheating.nl/infrarood-panelen-badkamer/', link: 'Bekijk badkamerpanelen →' },
+      ]
+    },
+    'Werkplek in grote ruimte / hal': {
+      tip: "In grote hallen of werkplaatsen is gericht verwarmen van de werkplek veel efficiënter dan de hele ruimte opwarmen. Bij hoogte > 3m: hangende uitvoering of industriële halstralers overwegen.",
+      cards: [
+        { top: true,  icon: '🏭', title: 'Industriële infrarood halstralers', desc: 'Speciaal voor grote ruimtes, loodsen en werkplaatsen. Hoog rendement, gerichte straling boven de werkplek.', url: 'https://dutchheating.nl/industriele-halstralers/', link: 'Bekijk halstralers →' },
+        { top: false, icon: '☀️', title: 'Plafond infrarood panelen', desc: 'Hangend aan het plafond boven de werkplek. Gelijkmatige straling, eenvoudig te installeren.', url: 'https://dutchheating.nl/infrarood-paneel-plafond/', link: 'Bekijk plafondpanelen →' },
+      ]
+    },
+    default: {
+      tip: "Infrarood panelen verwarmen objecten direct — niet de lucht. Hierdoor voelt de ruimte al comfortabel aan bij een lagere luchttemperatuur, wat gemiddeld 20-30% energie bespaart.",
+      cards: [
+        { top: true,  icon: '☀️', title: 'Infrarood wandpanelen', desc: 'Strak, plat en krachtig. Past in elk interieur. Leverbaar met thermostaat, wifi en in diverse uitvoeringen.', url: 'https://dutchheating.nl/infraroodpaneel-wand/', link: 'Bekijk wandpanelen →' },
+        { top: false, icon: '🖼️', title: 'Bedrukte infrarood panelen', desc: 'Volledig op maat met eigen foto of design. Warm én decoratief — onzichtbaar als verwarmingselement.', url: 'https://dutchheating.nl/bedrukte-infrarood-panelen/', link: 'Bekijk bedrukte panelen →' },
+        { top: false, icon: '📶', title: 'Infrarood panelen met wifi', desc: 'Bedienbaar via smartphone. Stel schema\'s in en stuur op afstand aan.', url: 'https://dutchheating.nl/infrarood-panelen-met-wifi/', link: 'Bekijk wifi panelen →' },
+      ]
+    }
+  },
+  terras: {
+    'Werkplaats / loods': {
+      tip: "Voor grote overdekte werkruimtes zijn industriële halstralers de beste keuze. Ze bieden hoog vermogen, gerichte straling en lange levensduur.",
+      cards: [
+        { top: true,  icon: '🏭', title: 'Industriële infrarood halstralers', desc: 'Ecosun S+ serie: hoge efficiëntie, weinig onderhoud, geschikt voor loodsen en grote werkplaatsen.', url: 'https://dutchheating.nl/industriele-halstralers/', link: 'Bekijk industriële stralers →' },
+        { top: false, icon: '⚡', title: 'Elektrische werkplaatsverwarming', desc: 'Breed assortiment voor werkplaats en garage, in diverse vermogens.', url: 'https://dutchheating.nl/elektrische-verwarming-werkplaats/', link: 'Bekijk werkplaatsverwarming →' },
+      ]
+    },
+    'sfeervol': {
+      tip: "Donkerstralers geven directe warmte zonder storend oranje licht. Ideaal voor restaurants, horecaterrassen en tuinen waar sfeer belangrijk is.",
+      cards: [
+        { top: true,  icon: '🔥', title: 'CityLine Topdesign terrasverwarmer', desc: 'Stijlvolle donkerstraler met afstandsbediening, 2400W. Geen licht, directe warmte. Populairste keuze voor sfeervol gebruik.', url: 'https://dutchheating.nl/infrarood-terrasverwarming/', link: 'Bekijk terrasverwarmers →' },
+        { top: false, icon: '🌿', title: 'VH Smart HeatBar', desc: 'Compact en sfeervol, 2400W. Ideaal voor kleine terrassen en balkons.', url: 'https://dutchheating.nl/infrarood-terrasverwarming/', link: 'Bekijk de HeatBar →' },
+      ]
+    },
+    default: {
+      tip: "Kies het stralertype op basis van sfeer en locatie. Donkerstralers zijn het meest sfeervol; korte golf stralers zijn krachtiger en windbestendiger.",
+      cards: [
+        { top: true,  icon: '🔥', title: 'Infrarood terrasverwarmers', desc: 'Compleet assortiment donkerstralers, korte golf en industriële stralers. Voor elk terras en elke situatie.', url: 'https://dutchheating.nl/infrarood-terrasverwarming/', link: 'Bekijk alle terrasverwarmers →' },
+        { top: false, icon: '🎛️', title: 'Thermostaten & aansturing', desc: 'Dimmers, timers en wifi-bediening voor je terrasverwarmer.', url: 'https://dutchheating.nl/thermostaten-aansturing/', link: 'Bekijk aansturing →' },
+      ]
+    }
+  },
+  therm: {
+    default: {
+      tip: "Een goede thermostaat bespaart gemiddeld 20-30% energie. Met een vloersensor bescherm je je topvloer tegen oververhitting. Bij meerdere zones: één thermostaat en sensor per zone.",
+      cards: [
+        { top: true,  icon: '🎛️', title: 'Thermostaten & aansturing', desc: 'Breed aanbod: eenvoudige kamerthermostaten, programmeerbare modellen, wifi-thermostaten en smarthome-compatibele oplossingen.', url: 'https://dutchheating.nl/thermostaten-aansturing/', link: 'Bekijk alle thermostaten →' },
+        { top: false, icon: '📱', title: 'Wifi & smarthome thermostaten', desc: 'Koppelbaar aan Google Home, Apple HomeKit, Homey, Toon, KNX, Zigbee en Z-Wave.', url: 'https://dutchheating.nl/infrarood-panelen-met-wifi/', link: 'Bekijk slimme thermostaten →' },
+      ]
+    }
+  }
+};
+
+function getAdvice() {
+  const cat = state.category;
+  const db = adviceDB[cat];
+  if (!db) return db?.default || adviceDB.vloer.default;
+
+  // Terras: werkplaats of sfeer
+  if (cat === 'terras') {
+    if (state.answers['terras-1'] === 'Werkplaats / loods') return db['Werkplaats / loods'];
+    if (state.answers['terras-4'] === 'Geen zichtbaar licht (donkerstraler)') return db['sfeervol'];
+    return db.default;
+  }
+  // Paneel: badkamer of werkplek
+  if (cat === 'paneel') {
+    if (state.answers['paneel-3'] === 'Badkamer') return db['Badkamer'];
+    if (state.answers['paneel-3'] === 'Werkplek in grote ruimte / hal') return db['Werkplek in grote ruimte / hal'];
+    return db.default;
+  }
+  return db.default || db;
+}
+
+function showResult() {
+  const advice = getAdvice();
+  const cat = state.category;
+
+  // Build summary
+  const summaryItems = Object.entries(state.answers)
+    .filter(([k]) => !k.includes('kleur'))
+    .slice(0, 6)
+    .map(([k, v]) => {
+      const label = k.replace(/[a-z]+-\d+(-kleur)?/, '').trim() || k;
+      return `<div class="summary-item"><div class="s-icon">${catIcons[cat]}</div><div><div class="s-q">${k.replace(/-/g,' ')}</div><div class="s-a">${v}</div></div></div>`;
+    }).join('');
+
+  let html = `
+    <div class="result-header">
+      <div class="result-chip">✦ Jouw advies op maat</div>
+      <h2>${catLabels[cat]}</h2>
+      <p>Op basis van jouw antwoorden — dit past het beste bij jou</p>
+    </div>
+    <div class="result-body">
+      <div class="result-tip">
+        <div class="tip-title">💡 Tip van onze adviseur</div>
+        <div class="tip-body">${advice.tip}</div>
+      </div>
+      <div class="advice-cards">`;
+
+  advice.cards.forEach(c => {
+    html += `<div class="advice-card${c.top ? ' top' : ''}">
+      ${c.top ? '<div class="top-badge">⭐ Beste keuze</div>' : ''}
+      <div class="a-icon">${c.icon}</div>
+      <div>
+        <div class="a-title">${c.title}</div>
+        <div class="a-desc">${c.desc}</div>
+        <a class="a-link" href="${c.url}" target="_blank">${c.link}</a>
+      </div>
+    </div>`;
+  });
+
+  // Answers summary
+  const ansEntries = Object.entries(state.answers).filter(([k,v]) => v);
+  if (ansEntries.length) {
+    html += `</div><div style="margin-bottom:24px"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#222">Jouw antwoorden samengevat</div><div class="summary-grid">`;
+    ansEntries.forEach(([k, v]) => {
+      const stepParts = k.split('-');
+      const stepNum = stepParts[stepParts.length - 1];
+      html += `<div class="summary-item"><div class="s-icon" style="font-size:1rem;width:32px;text-align:center">${catIcons[cat]}</div><div><div class="s-q">Stap ${stepNum.replace(/[a-z]/g,'')}</div><div class="s-a">${v}</div></div></div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  html += `
+      <div class="result-actions">
+        <button class="btn-restart" onclick="restart()">↺ Opnieuw beginnen</button>
+        <a class="btn-shop" href="https://dutchheating.nl" target="_blank">Naar de webshop ✦</a>
+      </div>
+    </div>`;
+
+  document.getElementById('resultContent').innerHTML = html;
+  showStep('step-result');
+  state.current = 'step-result';
+  state.history.push('step-result');
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('pLabel').textContent = 'Advies klaar';
+  document.getElementById('pCount').textContent = '✓';
+  document.getElementById('sectionDots').innerHTML = '';
+}
+
+function restart() {
+  state.category = null;
+  state.answers = {};
+  state.history = ['step-cat'];
+  state.current = 'step-cat';
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
+  document.getElementById('btn-cat-next').disabled = true;
+  showStep('step-cat');
+  updateProgress();
+}
+
+// init
+updateProgress();
+</script>
+</body>
+</html>
